@@ -1,0 +1,1 @@
+Pack 1, warnings: cell 15 other fault, temp 3 > up limit, discharge current other fault, Protection State 1: Charge current protect, Protection State 2: Lower discharge temp protect, Control State: undefined, Fault State: Sample fault, Warning State 1: Undefined, Warning State 2: High MOS temp warn
