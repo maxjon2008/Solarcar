@@ -525,7 +525,7 @@ def bms_getAnalogData(bms,batNumber):
 
             for i in range(0,cells):
                 v_cell[(p-1,i)] = int(inc_data[byte_index:byte_index+4],16)
-                telemetry_module.set_telemetry(v_cell_key[i], v_cell[(p-1,i)]) # telemetry
+                # telemetry_module.set_telemetry(v_cell_key[i], v_cell[(p-1,i)]) # telemetry
 
                 #Adding this because otherwise weird stuff happens
                 # added in fork https://github.com/jpgnz/bmspace
@@ -549,7 +549,9 @@ def bms_getAnalogData(bms,batNumber):
             
             #Calculate cells max diff volt
             cell_max_diff_volt = cell_max_volt - cell_min_volt
-            telemetry_module.set_telemetry("cell_max_diff_volt", cell_max_diff_volt) # telemetry
+            telemetry_module.set_telemetry("cell_max_volt", cell_max_volt) # telemetry
+            telemetry_module.set_telemetry("cell_min_volt", cell_min_volt) # telemetry
+            # telemetry_module.set_telemetry("cell_max_diff_volt", cell_max_diff_volt) # telemetry
             
             if debug_output > 0:
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) +", Cell Max Diff Volt Calc: " + str(cell_max_diff_volt) + " mV")
@@ -561,6 +563,7 @@ def bms_getAnalogData(bms,batNumber):
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", Total temperature sensors: " + str(temps))
             byte_index += 2
 
+            # TODO "cell_max_temp", "cell_min_temp"
             for i in range(0,temps): #temps-2
                 t_cell[(p-1,i)] = (int(inc_data[byte_index:byte_index + 4],16)-2730)/10
                 telemetry_module.set_telemetry(temp_key[i], t_cell[(p-1,i)]) # telemetry
@@ -597,6 +600,7 @@ def bms_getAnalogData(bms,batNumber):
             if debug_output > 0:
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", V Pack: " + str(v_pack[p-1]) + " V")
 
+            # TODO "p_pack"
             i_remain_cap.append(int(inc_data[byte_index:byte_index+4],16)*10)
             telemetry_module.set_telemetry("i_remaining_capacity", i_remain_cap[p-1]) # telemetry
             byte_index += 4
