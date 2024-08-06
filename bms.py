@@ -525,7 +525,6 @@ def bms_getAnalogData(bms,batNumber):
 
             for i in range(0,cells):
                 v_cell[(p-1,i)] = int(inc_data[byte_index:byte_index+4],16)
-                # telemetry_module.set_telemetry(v_cell_key[i], v_cell[(p-1,i)]) # telemetry
 
                 #Adding this because otherwise weird stuff happens
                 # added in fork https://github.com/jpgnz/bmspace
@@ -549,7 +548,6 @@ def bms_getAnalogData(bms,batNumber):
             
             #Calculate cells max diff volt
             cell_max_diff_volt = cell_max_volt - cell_min_volt
-            # telemetry_module.set_telemetry("cell_max_diff_volt", cell_max_diff_volt) # telemetry
             telemetry_module.set_telemetry("cell_max_volt", cell_max_volt) # telemetry
             telemetry_module.set_telemetry("cell_min_volt", cell_min_volt) # telemetry
 
@@ -630,7 +628,6 @@ def bms_getAnalogData(bms,batNumber):
             byte_index += 2 # Manual: Define number P = 3
 
             i_full_cap.append(int(inc_data[byte_index:byte_index+4],16)*10)
-            # telemetry_module.set_telemetry("i_full_capacity", i_full_cap[p-1]) # telemetry
             byte_index += 4
 
             if debug_output > 0:
@@ -652,7 +649,6 @@ def bms_getAnalogData(bms,batNumber):
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", Cycles: " + str(cycles[p-1]))
 
             i_design_cap.append(int(inc_data[byte_index:byte_index+4],16)*10)
-            # telemetry_module.set_telemetry("i_design_capacity", i_design_cap[p-1]) # telemetry
             byte_index += 4
 
             if debug_output > 0:
@@ -660,7 +656,6 @@ def bms_getAnalogData(bms,batNumber):
 
             try:
                 soh.append(round(i_full_cap[p-1]/i_design_cap[p-1]*100,2))
-                # telemetry_module.set_telemetry("soh", soh[p-1]) # telemetry
 
                 if debug_output > 0:
                     print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", SOH: " + str(soh[p-1]) + " %")
