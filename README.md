@@ -1,5 +1,5 @@
 # BMS Pace - Python data retrieval
-This software uses the BMS frontend of https://github.com/Tertiush/bmspace and prints PACE BMS data to the console. 
+This software uses the BMS frontend of https://github.com/Tertiush/bmspace and sends PACE BMS telemetry to TB Server. 
 
 Features:
 * Cell voltages
