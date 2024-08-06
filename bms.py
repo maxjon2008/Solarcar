@@ -618,7 +618,7 @@ def bms_getAnalogData(bms,batNumber):
             p_pack = v_pack[p-1] * i_pack[p-1]
             telemetry_module.set_telemetry("p_pack", p_pack) # telemetry
             if debug_output > 0:
-                print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", P Pack: " + str(p_pack[p-1]) + " W")
+                print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", P Pack: " + str(p_pack) + " W")
             
             i_remain_cap.append(int(inc_data[byte_index:byte_index+4],16)*10)
             telemetry_module.set_telemetry("i_remaining_capacity", i_remain_cap[p-1]) # telemetry
