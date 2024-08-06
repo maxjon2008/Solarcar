@@ -580,7 +580,7 @@ def bms_getAnalogData(bms,batNumber):
                     cell_max_temp = t_cell[(p-1,i)]
                 else:
                     if t_cell[(p-1,i)] < cell_min_temp:
-                        cell_min_temp = v_cell[(p-1,i)]
+                        cell_min_temp = t_cell[(p-1,i)]
                     if t_cell[(p-1,i)] > cell_max_temp:
                         cell_max_temp = t_cell[(p-1,i)]
             telemetry_module.set_telemetry("cell_max_temp", cell_max_temp) # telemetry
@@ -615,8 +615,8 @@ def bms_getAnalogData(bms,batNumber):
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", V Pack: " + str(v_pack[p-1]) + " V")
 
             # calculate "p_pack"
-            p_pack = v_pack * i_pack
-            telemetry_module.set_telemetry("p_pack", p_pack[p-1]) # telemetry
+            p_pack = v_pack[p-1] * i_pack[p-1]
+            telemetry_module.set_telemetry("p_pack", p_pack) # telemetry
             if debug_output > 0:
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", P Pack: " + str(p_pack[p-1]) + " W")
             
