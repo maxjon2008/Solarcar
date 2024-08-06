@@ -52,8 +52,8 @@ alive = False
 print("Connection Type: " + connection_type)
 
 # lists for telemetry assignment
-v_cell_key = ["v_cell_1", "v_cell_2", "v_cell_3", "v_cell_4", "v_cell_5", "v_cell_6", "v_cell_7", "v_cell_8",
-          "v_cell_9", "v_cell_10", "v_cell_11", "v_cell_12", "v_cell_13", "v_cell_14", "v_cell_15", "v_cell_16"]
+# v_cell_key = ["v_cell_1", "v_cell_2", "v_cell_3", "v_cell_4", "v_cell_5", "v_cell_6", "v_cell_7", "v_cell_8",
+          # "v_cell_9", "v_cell_10", "v_cell_11", "v_cell_12", "v_cell_13", "v_cell_14", "v_cell_15", "v_cell_16"]
 temp_key = ["temp_1", "temp_2", "temp_3", "temp_4", "temp_5", "temp_6"]
 
 # function connects to BMS
@@ -549,9 +549,10 @@ def bms_getAnalogData(bms,batNumber):
             
             #Calculate cells max diff volt
             cell_max_diff_volt = cell_max_volt - cell_min_volt
+            # telemetry_module.set_telemetry("cell_max_diff_volt", cell_max_diff_volt) # telemetry
             telemetry_module.set_telemetry("cell_max_volt", cell_max_volt) # telemetry
             telemetry_module.set_telemetry("cell_min_volt", cell_min_volt) # telemetry
-            # telemetry_module.set_telemetry("cell_max_diff_volt", cell_max_diff_volt) # telemetry
+
             
             if debug_output > 0:
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) +", Cell Max Diff Volt Calc: " + str(cell_max_diff_volt) + " mV")
@@ -563,15 +564,28 @@ def bms_getAnalogData(bms,batNumber):
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", Total temperature sensors: " + str(temps))
             byte_index += 2
 
-            # TODO "cell_max_temp", "cell_min_temp"
-            for i in range(0,temps): #temps-2
+            for i in range(0,temps): 
                 t_cell[(p-1,i)] = (int(inc_data[byte_index:byte_index + 4],16)-2730)/10
-                telemetry_module.set_telemetry(temp_key[i], t_cell[(p-1,i)]) # telemetry
+                if i >= 4:
+                    telemetry_module.set_telemetry(temp_key[i], t_cell[(p-1,i)]) # telemetry of temp_5 and temp_6 
                 
                 byte_index += 4
                 if debug_output > 0:
                     print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", Temp" + str(i+1) + ": " + str(round(t_cell[(p-1,i)],1)) + " °C")
 
+            #Calculate "cell_max_temp", "cell_min_temp" of temp_1 .. temp_4
+            for i in range(0,4):                
+                if i == 0:
+                    cell_min_temp = t_cell[(p-1,i)]
+                    cell_max_temp = t_cell[(p-1,i)]
+                else:
+                    if t_cell[(p-1,i)] < cell_min_temp:
+                        cell_min_temp = v_cell[(p-1,i)]
+                    if t_cell[(p-1,i)] > cell_max_temp:
+                        cell_max_temp = t_cell[(p-1,i)]
+            telemetry_module.set_telemetry("cell_max_temp", cell_max_temp) # telemetry
+            telemetry_module.set_telemetry("cell_min_temp", cell_min_temp) # telemetry
+ 
             # t_mos= (int(inc_data[byte_index:byte_index+4],16))/160-273
             # # client.publish(config['mqtt_base_topic'] + "/t_mos",str(round(t_mos,1)))
             # if print_initial:
@@ -600,7 +614,12 @@ def bms_getAnalogData(bms,batNumber):
             if debug_output > 0:
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", V Pack: " + str(v_pack[p-1]) + " V")
 
-            # TODO "p_pack"
+            # calculate "p_pack"
+            p_pack = v_pack * i_pack
+            telemetry_module.set_telemetry("p_pack", p_pack[p-1]) # telemetry
+            if debug_output > 0:
+                print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", P Pack: " + str(p_pack[p-1]) + " W")
+            
             i_remain_cap.append(int(inc_data[byte_index:byte_index+4],16)*10)
             telemetry_module.set_telemetry("i_remaining_capacity", i_remain_cap[p-1]) # telemetry
             byte_index += 4
@@ -611,7 +630,7 @@ def bms_getAnalogData(bms,batNumber):
             byte_index += 2 # Manual: Define number P = 3
 
             i_full_cap.append(int(inc_data[byte_index:byte_index+4],16)*10)
-            telemetry_module.set_telemetry("i_full_capacity", i_full_cap[p-1]) # telemetry
+            # telemetry_module.set_telemetry("i_full_capacity", i_full_cap[p-1]) # telemetry
             byte_index += 4
 
             if debug_output > 0:
@@ -633,7 +652,7 @@ def bms_getAnalogData(bms,batNumber):
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", Cycles: " + str(cycles[p-1]))
 
             i_design_cap.append(int(inc_data[byte_index:byte_index+4],16)*10)
-            telemetry_module.set_telemetry("i_design_capacity", i_design_cap[p-1]) # telemetry
+            # telemetry_module.set_telemetry("i_design_capacity", i_design_cap[p-1]) # telemetry
             byte_index += 4
 
             if debug_output > 0:
@@ -641,7 +660,7 @@ def bms_getAnalogData(bms,batNumber):
 
             try:
                 soh.append(round(i_full_cap[p-1]/i_design_cap[p-1]*100,2))
-                telemetry_module.set_telemetry("soh", soh[p-1]) # telemetry
+                # telemetry_module.set_telemetry("soh", soh[p-1]) # telemetry
 
                 if debug_output > 0:
                     print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", SOH: " + str(soh[p-1]) + " %")
