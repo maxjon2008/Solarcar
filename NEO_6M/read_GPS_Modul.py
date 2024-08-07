@@ -3,6 +3,7 @@ import serial
 import sys
 import logging
 
+
 logger = logging.getLogger()
 logger.addHandler(logging.StreamHandler(sys.stdout))
 logger.setLevel(logging.DEBUG)
@@ -21,6 +22,7 @@ while True:
         try:
                 line = sio.readline()
 
+                
                 logger.debug (line)
 
         except serial.SerialException as e:
