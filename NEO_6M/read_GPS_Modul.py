@@ -27,7 +27,7 @@ while True:
                 
                 new_line = line.split(sep =",")
                 
-                logger.debug (new_line)
+                #logger.debug (new_line)
                 
                 speed_knots = 'not available'
                 speed_km_h = 'not available'
