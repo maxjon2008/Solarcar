@@ -21,13 +21,22 @@ sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 while True:
         try:
                 line = sio.readline()
-
                 
-                logger.debug (line)
-
+                new_line = line.split(sep =",")
+                
+                logger.debug (new_line)
+                
+                if(new_line[0] == '$GPRMC'):
+                    speed_knots = float(new_line[7])
+                    print("Speed in knots: ", speed_knots)
+                    speed_km_h = speed_knots * 1.852
+                    print("Speed in km/h: {:5.1f}".format(speed_km_h))
+        except KeyboardInterrupt:
+                print("\nProgram terminated by user.")
+                break
         except serial.SerialException as e:
                 logger.error('SerialException: {}'.format(e))
                 break
         except UnicodeDecodeError as e:
                 logger.error('UnicodeDecodeError: {}'.format(e))
-        continue
+                continue
