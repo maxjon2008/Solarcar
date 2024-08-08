@@ -31,8 +31,8 @@ while True:
                 
                 if new_line[0] == '$GPRMC':
                     if new_line[2] == 'A':
-                        speed_knots = float(new_line[7])
-                        speed_km_h = 1.852 * speed_knots
+                        speed_knots = float(new_line[7])/ 100.
+                        speed_km_h = 1.852 * (float(new_line[7])/ 100.)
                         
                     print("Speed in knots: ", speed_knots)
                     print("Speed in km/h: ", speed_km_h)
