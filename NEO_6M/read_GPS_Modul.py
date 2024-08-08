@@ -1,3 +1,6 @@
+# Programm liest vom Neo 6M GPS Modul und extrahiert die Geschwindigkeit
+# Quelle: https://www.haraldkreuzer.net/aktuelles/mit-gps-modul-die-uhrzeit-fuer-raspberry-pi-3-a-plus-setzen-ganz-ohne-netzwerk
+
 import io
 import serial
 import sys
