@@ -14,6 +14,7 @@ import sys
 import constants
 import telemetry_module
 import server_module
+import speed_module
 import datetime
 
 # start message
@@ -1034,7 +1035,8 @@ server_module.TB_server_connect()
 try:
     while True:
         if bms_connected == True:
-
+            ###############
+            # data from BMS 
             success, data = bms_getAnalogData(bms,batNumber=255)
             if success != True:
                 print("Error retrieving BMS analog data: " + data)
@@ -1046,13 +1048,16 @@ try:
             success, data = bms_getWarnInfo(bms)
             if success != True:
                 print("Error retrieving BMS warning info: " + data)
-            # telemetry dictionary
-            print(telemetry_module.telemetry)
-            # send telemetry to TB Server
-            alive = not alive
+            ######################
+            # speed and alive data
+            speed_km_h = speed_module.read_speed_km_h() # read speed_km_h
+            telemetry_module.set_telemetry("speed_km_h", speed_km_h)
+            alive = not alive # toggle alive variable
             telemetry_module.set_telemetry("alive", alive)
+            ############################
+            # send telemetry to TB Server
             server_module.client.send_telemetry(telemetry_module.telemetry)
-            # toggle alive variable
+            print(telemetry_module.telemetry)
             time.sleep(scan_interval/3)
         else: #BMS not connected
             print("BMS disconnected, trying to reconnect...")

@@ -1,5 +1,6 @@
 # Inhalt des Moduls:
 # - das Dictionary mit den BMS Telemetrie-Daten
+# - Dictionary erweitert um "speed_km_h"
 # - die Funktion zum Setzen der BMS Telemetrie-Daten
 
 telemetry = {
@@ -29,7 +30,8 @@ telemetry = {
     "heart": 0,
     "warning_string": "",
     "balancing_1": 0,
-    "balancing_2": 0
+    "balancing_2": 0,
+    "speed_km_h": 0
 }
 
 def set_telemetry(key, value):
