@@ -6,7 +6,7 @@ import io
 import serial
 import sys
 import logging
-from filelock import FileLock
+import filelock
 
 # Logger für die serielle Schnittstelle initialisieren 
 logger = logging.getLogger()
@@ -27,7 +27,7 @@ ser = serial.Serial(
         parity = serial.PARITY_NONE,
         stopbits = serial.STOPBITS_ONE,
         bytesize = serial.EIGHTBITS,
-        timeout = 0.9
+        timeout =  0.9
 )
 sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
@@ -46,17 +46,23 @@ while True:
                 speed_km_h = 1.852 * (float(new_line[7])/ 100.)
                 # speed_km_h auf Konsole schreiben
                 logger.debug (str(speed_km_h))
-                # speed_km_h in Datei für Inter-Prozess-Kommunikation schreiben
-                lock = FileLock(lock_path, timeout=1) # lock
-                with lock:
-                    with open(file_path, mode="w", encoding="utf-8") as datei:
-                        datei.write(str(speed_km_h))            
+                try:
+                    # speed_km_h in Datei für Inter-Prozess-Kommunikation schreiben
+                    lock = filelock.FileLock(lock_path, timeout=1) # lock
+                    with lock:
+                        with open(file_path, mode="w", encoding="utf-8") as datei:
+                            datei.write(str(speed_km_h))
+                except filelock._error.Timeout:
+                    print("Aktuell wird der Lock von einem anderen Programm gehalten!")    
     except KeyboardInterrupt:
             print("\nProgram terminated by user.")
             break
     except serial.SerialException as e:
             logger.error('SerialException: {}'.format(e))
             break
+    except filelock._error.Timeout:
+            print("Aktuell wird der Lock von einem anderen Programm gehalten!")
+            continue
     except UnicodeDecodeError as e:
             logger.error('UnicodeDecodeError: {}'.format(e))
             continue

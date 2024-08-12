@@ -15,11 +15,14 @@
 
 # Bibliotheken importieren
 import tkinter as tk
-from filelock import FileLock
+import filelock
 import logging
 
 # ID zum Beenden des .after Jobs
 ID = "0"
+
+# Initialisierung der Variable der Inter-Prozess-Kommunikation
+speed_km_h = 0.0
 
 # filelock logging level setzen
 logging.getLogger("filelock").setLevel(logging.INFO)
@@ -50,16 +53,19 @@ lock_path = "SolarCar_speed.txt.lock"
 
 # lesen und anzeigen 
 def lesen_und_anzeigen():
-    global ID
+    global ID, speed_km_h
     
-    # lock
-    lock = FileLock(lock_path, timeout=1)
-    # Input-Datei öffnen, lesen und schließen
-    with lock:
-        with open(file_path, mode="r", encoding="utf-8") as datei:
-            speed_km_h = datei.read()    
-    
-    ausgabefeld_wert.set(speed_km_h[:8])
+    try:
+        # lock
+        lock = filelock.FileLock(lock_path, timeout=1)
+        # Input-Datei öffnen, lesen und schließen
+        with lock:
+            with open(file_path, mode="r", encoding="utf-8") as datei:
+                speed_km_h = datei.read()    
+        
+        ausgabefeld_wert.set(speed_km_h[:8])
+    except filelock._error.Timeout:
+        print("Aktuell wird der Lock von einem anderen Programm gehalten!")
     # in root.mainloop() wiederholt aufrufen
     ID = root.after(1000, lesen_und_anzeigen)   
 
