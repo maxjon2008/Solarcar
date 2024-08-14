@@ -53,16 +53,13 @@ while True:
                         with open(file_path, mode="w", encoding="utf-8") as datei:
                             datei.write(str(speed_km_h))
                 except filelock._error.Timeout:
-                    print("Aktuell wird der Lock von einem anderen Programm gehalten!")    
+                    print("Aktuell wird der Speed Lock von einem anderen Programm gehalten!")    
     except KeyboardInterrupt:
             print("\nProgram terminated by user.")
             break
     except serial.SerialException as e:
             logger.error('SerialException: {}'.format(e))
             break
-    except filelock._error.Timeout:
-            print("Aktuell wird der Lock von einem anderen Programm gehalten!")
-            continue
     except UnicodeDecodeError as e:
             logger.error('UnicodeDecodeError: {}'.format(e))
             continue

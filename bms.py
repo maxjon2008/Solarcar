@@ -14,7 +14,7 @@ import sys
 import constants
 import telemetry_module
 import server_module
-import speed_module
+import inter_process_comm_module
 import datetime
 
 # start message
@@ -551,6 +551,8 @@ def bms_getAnalogData(bms,batNumber):
             cell_max_diff_volt = cell_max_volt - cell_min_volt
             telemetry_module.set_telemetry("cell_max_volt", cell_max_volt) # telemetry
             telemetry_module.set_telemetry("cell_min_volt", cell_min_volt) # telemetry
+            inter_process_comm_module.set_bms_gui_data("cell_max_volt", cell_max_volt) # instrumentation gui
+            inter_process_comm_module.set_bms_gui_data("cell_min_volt", cell_min_volt) # instrumentation gui
 
             
             if debug_output > 0:
@@ -584,6 +586,8 @@ def bms_getAnalogData(bms,batNumber):
                         cell_max_temp = t_cell[(p-1,i)]
             telemetry_module.set_telemetry("cell_max_temp", cell_max_temp) # telemetry
             telemetry_module.set_telemetry("cell_min_temp", cell_min_temp) # telemetry
+            inter_process_comm_module.set_bms_gui_data("cell_max_temp", cell_max_temp) # instrumentation gui
+            inter_process_comm_module.set_bms_gui_data("cell_min_temp", cell_min_temp) # instrumentation gui
  
             # t_mos= (int(inc_data[byte_index:byte_index+4],16))/160-273
             # # client.publish(config['mqtt_base_topic'] + "/t_mos",str(round(t_mos,1)))
@@ -616,6 +620,7 @@ def bms_getAnalogData(bms,batNumber):
             # calculate "p_pack"
             p_pack = v_pack[p-1] * i_pack[p-1]
             telemetry_module.set_telemetry("p_pack", p_pack) # telemetry
+            inter_process_comm_module.set_bms_gui_data("p_pack", p_pack) # instrumentation gui
             if debug_output > 0:
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", P Pack: " + str(p_pack) + " W")
             
@@ -637,6 +642,7 @@ def bms_getAnalogData(bms,batNumber):
             try:
                 soc.append(round(i_remain_cap[p-1]/i_full_cap[p-1]*100,2))
                 telemetry_module.set_telemetry("soc", soc[p-1]) # telemetry
+                inter_process_comm_module.set_bms_gui_data("soc", soc[p-1]) # instrumentation gui
                 if debug_output > 0:
                     print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", SOC: " + str(soc[p-1]) + " %")
             except Exception as e:
@@ -989,6 +995,10 @@ def bms_getWarnInfo(bms):
             warnings = warnings.rstrip(", ")
 
             telemetry_module.set_telemetry("warning_string", warnings) # telemetry
+            if warnings == "":
+                inter_process_comm_module.set_bms_gui_data("warning_string", "       ") # instrumentation gui
+            else:
+                inter_process_comm_module.set_bms_gui_data("warning_string", "Warning") # instrumentation gui
             telemetry_module.set_telemetry("balancing_1", balanceState1) # telemetry
             telemetry_module.set_telemetry("balancing_2", balanceState1) # telemetry
             if debug_output > 0:
@@ -1050,7 +1060,7 @@ try:
                 print("Error retrieving BMS warning info: " + data)
             ######################
             # speed and alive data
-            speed_km_h = speed_module.read_speed_km_h() # read speed_km_h
+            speed_km_h = inter_process_comm_module.read_speed_km_h() # read speed_km_h
             telemetry_module.set_telemetry("speed_km_h", speed_km_h)
             alive = not alive # toggle alive variable
             telemetry_module.set_telemetry("alive", alive)
@@ -1059,6 +1069,10 @@ try:
             server_module.client.send_telemetry(telemetry_module.telemetry)
             print(telemetry_module.telemetry)
             time.sleep(scan_interval/3)
+            ###########################
+            # BMS GUI data
+            inter_process_comm_module.write_bms_data()
+            print(inter_process_comm_module.bms_gui_data)
         else: #BMS not connected
             print("BMS disconnected, trying to reconnect...")
             bms,bms_connected = bms_connect(config['bms_ip'],config['bms_port'])
