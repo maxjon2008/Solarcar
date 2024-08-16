@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Instrumentation_GUI
+Exec=lxterminal --working-directory=/home/ms/Python/Solarcar -e /home/ms/Python/Solarcar/start_instrumentation_gui.sh
+
+
