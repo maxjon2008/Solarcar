@@ -1,2 +1,3 @@
 #!/bin/sh
-/home/ms/env/bin/python /home/ms/Python/Solarcar/bms.py
+cd /home/ms/Python/Solarcar
+/home/ms/env/bin/python bms.py

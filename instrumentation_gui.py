@@ -156,6 +156,9 @@ def close_window():
     # Fenster schließen
     root.destroy()
 
+# Begrüßung drucken
+print("Hello from instrumentation_gui.py")
+
 # Funktion zum ersten Mal aufrufen
 lesen_und_anzeigen()
 

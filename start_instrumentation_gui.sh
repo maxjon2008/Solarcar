@@ -1,2 +1,3 @@
 #!/bin/sh
-/home/ms/env/bin/python /home/ms/Python/Solarcar/instrumentation_gui.py
+cd /home/ms/Python/Solarcar
+/home/ms/env/bin/python instrumentation_gui.py
