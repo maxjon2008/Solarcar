@@ -31,6 +31,9 @@ ser = serial.Serial(
 )
 sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
+# Begrüßung drucken
+print("Waiting for GPS Module ...")
+
 while True:
     try:
         # Read and return a line from the stream
