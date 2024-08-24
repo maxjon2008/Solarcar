@@ -11,7 +11,7 @@ import filelock
 # Logger für die serielle Schnittstelle initialisieren 
 logger = logging.getLogger()
 logger.addHandler(logging.StreamHandler(sys.stdout))
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 # filelock logging level setzen
 logging.getLogger("filelock").setLevel(logging.INFO)

@@ -37,6 +37,7 @@ connection_type = config['connection_type']
 bms_serial = config['bms_serial']
 bms_connected = False
 debug_output = config['debug_output']
+debug_output2 = config['debug_output2']
 
 # initialize BMS properties
 bms_version = ''
@@ -1067,12 +1068,14 @@ try:
             ############################
             # send telemetry to TB Server
             server_module.client.send_telemetry(telemetry_module.telemetry)
-            print(telemetry_module.telemetry)
+            if debug_output2 > 1:
+                print(telemetry_module.telemetry)
             time.sleep(scan_interval/3)
             ###########################
             # BMS GUI data
             inter_process_comm_module.write_bms_data()
-            print(inter_process_comm_module.bms_gui_data)
+            if debug_output2 > 0:
+                print(inter_process_comm_module.bms_gui_data)
         else: #BMS not connected
             print("BMS disconnected, trying to reconnect...")
             bms,bms_connected = bms_connect(config['bms_ip'],config['bms_port'])
