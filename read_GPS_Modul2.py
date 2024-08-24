@@ -32,7 +32,7 @@ ser = serial.Serial(
 sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
 # Begrüßung drucken
-print("Waiting for GPS Module ...")
+print("Hello from read_GPS_Modul2.py")
 
 while True:
     try:
