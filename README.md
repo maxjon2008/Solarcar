@@ -1,5 +1,7 @@
-# BMS Pace - Python data retrieval
-This software uses the BMS frontend of https://github.com/Tertiush/bmspace and sends PACE BMS telemetry to TB Server. 
+# BMS Pace - Python data retrieval and display
+* bms.py uses the BMS frontend of https://github.com/Tertiush/bmspace and sends PACE BMS telemetry to local GUI and TB Server. In addition bms.py sends speed_km_h to TB Server. 
+* read_GPS_modul2.py provides speed_km_h to bms.py and instrumentation_gui.py.
+* instrumentation_gui.py displays speed_km_h and a subset of PACE BMS telemetry. 
 
 Features:
 * Cell voltages
@@ -28,7 +30,7 @@ NB: Tested with Python 3.10. Should work on later version as well.
 ### 3.1 Notes on configuration options
 Tested: 
 * **debug_output**: Options are 0 for minimal, 1 for minor errors such as checksums, 2-3 for more severe debug logs.
-
+* **debug_output2**: Options are 0 no output2, 1 for bms_gui_data, 2 for bms_gui_data and telemetry.
 Not tested: 
 * **force_pack_offset**: This is currently available in the development version. This offset is used to force a defined offset between the data read from **multiple packs**. If you have more than one pack and only the first is read successfully, you can force an offset here to get subsequent packs to read in successfully. Default is 0, multiple of 2 (e.g. 2, 4, 6....) may work. As large as 20 has been used in one instance.
 * **zero_pad_number_cells**: Adds leading 0's to the cell voltages, forcing then to display sequential in some dasboarding tools. E.g. setting this to 2 will display voltages as cell_01 rahter than cell_1.
