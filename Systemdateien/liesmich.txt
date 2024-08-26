@@ -1,4 +1,5 @@
-Datei                | Speicherort                | Aufgabe
-=====================|============================|===================================================================================
-config.txt           | /boot/firmware             | Sorgt dafür, dass das NEO6M GPS Modul über UART angesprochen werden kann 
-my_autostart.desktop | /home/ms/.config/autostart | Name: Instrumentation_GUI. Startet beim Booten das Programm instrumentation_gui.py
+Datei                  | Speicherort                | Aufgabe
+=======================|============================|===================================================================================
+config.txt             | /boot/firmware             | Sorgt dafür, dass das NEO6M GPS Modul über UART angesprochen werden kann 
+my_autostart.desktop   | /home/ms/.config/autostart | Name: Instrumentation_GUI. Startet beim Booten das Programm instrumentation_gui.py
+my_autostart_2.desktop | /home/ms/.config/autostart | Name: start_read_GPS_Modul. Startet beim Booten das Programm read_GPS_Modul2.py

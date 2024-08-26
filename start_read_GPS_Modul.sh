@@ -1,3 +1,3 @@
 #!/bin/sh
-cd /home/ms/Python/Solarcar
-/home/ms/env/bin/python read_GPS_Modul2.py
+cd /home/sc/Python/Solarcar
+/home/sc/env/bin/python read_GPS_Modul2.py
