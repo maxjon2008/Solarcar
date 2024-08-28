@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=start_read_GPS_Modul
+Exec=lxterminal --working-directory=/home/sc/Python/Solarcar -e /home/sc/Python/Solarcar/start_read_GPS_Modul.sh
