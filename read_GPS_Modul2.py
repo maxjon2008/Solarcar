@@ -46,7 +46,7 @@ while True:
             if new_line[2] == 'A':
                 # speed_km_h berechnen
                 speed_knots = float(new_line[7])/ 100.
-                speed_km_h = 1.852 * (float(new_line[7])/ 100.)
+                speed_km_h = 1.852 * (float(new_line[7]))
                 # speed_km_h auf Konsole schreiben
                 logger.debug (str(speed_km_h))
                 try:
