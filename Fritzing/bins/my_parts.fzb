@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="1.0.3b.2024-05-30.CD-1995-0-a7811ba0" icon="Mine.png">
+    <title>My Parts</title>
+    <instances>
+        <instance moduleIdRef="Drok-DC-buck-module_1" modelIndex="5789" path="C:/Users/marti/Documents/Fritzing/parts/user/Drok-DC-buck-module_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="X804_1" modelIndex="5795" path="C:/Users/marti/Documents/Fritzing/parts/user/X804_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="2-channel-relay-module_1" modelIndex="86265838" path="C:/Users/marti/Documents/Fritzing/parts/user/2-channel-relay-module_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="1-chan-5v-relay-module_1" modelIndex="5785" path="C:/Users/marti/Documents/Fritzing/parts/user/1-chan-5v-relay-module_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Solar-Panel" modelIndex="5793" path="C:/Users/marti/Documents/Fritzing/parts/user/Solar-Panel.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="3phase-motor-with-hall-sensors_1" modelIndex="5787" path="C:/Users/marti/Documents/Fritzing/parts/user/3phase-motor-with-hall-sensors_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="HEZHU-BLDC-3-Phase-DC-motor-controller_1" modelIndex="5791" path="C:/Users/marti/Documents/Fritzing/parts/user/HEZHU-BLDC-3-Phase-DC-motor-controller_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="raspberry-pi-5_1" modelIndex="86267102" path="C:/Users/marti/Documents/Fritzing/parts/user/raspberry-pi-5_1.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>
