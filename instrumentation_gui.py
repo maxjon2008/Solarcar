@@ -139,7 +139,7 @@ def lesen_und_anzeigen():
         bms_data_22_wert.set(new_bms_data_string[1] + " mV")
         bms_data_10_wert.set(new_bms_data_string[2] + " °C")
         bms_data_20_wert.set(new_bms_data_string[3] + " °C")
-        bms_data_02_wert.set(new_bms_data_string[4] + " W")
+        bms_data_02_wert.set(new_bms_data_string[4][:7] + " W")
         bms_data_00_wert.set(new_bms_data_string[5] + " %")
         warning_string_wert.set(new_bms_data_string[6])
         
