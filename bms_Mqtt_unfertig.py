@@ -5,6 +5,7 @@
 # - BMS: PACE P16S120A-14530-2.01
 
 # import libraries
+import random
 import time
 import yaml
 import os
@@ -16,6 +17,22 @@ import telemetry_module
 import server_module
 import inter_process_comm_module
 import datetime
+
+#MQTT
+from paho.mqtt import client as mqtt_client
+
+#MQTT
+broker = 'broker.emqx.io'
+port = 1883
+topic = "raspberry/topic"
+# Generate a Client ID with the publish prefix.
+client_id = f'publish-{random.randint(0, 1000)}'
+# username = 'emqx'
+# password = 'public'
+
+#Datensammeln:
+gesammelte_daten = []
+
 
 # start message
 print("START: " + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -84,6 +101,26 @@ def bms_connect(address, port):
         except OSError as msg:
             print("BMS socket error connecting: %s" % msg)
             return False, False
+
+#MQTT connect
+def connect_mqtt():
+    def on_connect(client, userdata, flags, rc):
+        if rc == 0:
+            print("Connected to MQTT Broker!")
+        else:
+            print("Failed to connect, return code %d\n", rc)
+
+    client = mqtt_client.Client(client_id)
+    # client.username_pw_set(username, password)
+    client.on_connect = on_connect
+    client.connect(broker, port)
+    return client
+
+#daten hinzufügen
+def daten_hinzufuegen(wert):
+    global gesammelte_daten
+    gesammelte_daten.append(wert)
+
 
 # function sends data to BMS
 def bms_sendData(comms,request=''):
@@ -494,7 +531,7 @@ def bms_getAnalogData(bms,batNumber):
     try:
 
         packs = int(inc_data[byte_index:byte_index+2],16)
-        telemetry_module.set_telemetry("analog_data_packs", packs) # telemetry
+        #telemetry_module.set_telemetry("analog_data_packs", packs) # telemetry 
         if debug_output > 0:
             print("Packs: " + str(packs))
         byte_index += 2
@@ -508,7 +545,7 @@ def bms_getAnalogData(bms,batNumber):
                 cells_prev = cells
 
             cells = int(inc_data[byte_index:byte_index+2],16)
-            telemetry_module.set_telemetry("total_cells", cells) # telemetry
+            #telemetry_module.set_telemetry("total_cells", cells) # telemetry
 
             #Possible remove this next test as were now testing for the INFOFLAG at the end
             if p > 1:
@@ -550,8 +587,12 @@ def bms_getAnalogData(bms,batNumber):
             
             #Calculate cells max diff volt
             cell_max_diff_volt = cell_max_volt - cell_min_volt
-            telemetry_module.set_telemetry("cell_max_volt", cell_max_volt) # telemetry
-            telemetry_module.set_telemetry("cell_min_volt", cell_min_volt) # telemetry
+            #telemetry_module.set_telemetry("cell_max_volt", cell_max_volt) # telemetry
+            #telemetry_module.set_telemetry("cell_min_volt", cell_min_volt) # telemetry
+            #mqtt senden
+            daten_hinzufuegen(cell_min_volt)
+            daten_hinzufuegen(cell_max_volt)
+            
             inter_process_comm_module.set_bms_gui_data("cell_max_volt", cell_max_volt) # instrumentation gui
             inter_process_comm_module.set_bms_gui_data("cell_min_volt", cell_min_volt) # instrumentation gui
 
@@ -560,8 +601,10 @@ def bms_getAnalogData(bms,batNumber):
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) +", Cell Max Diff Volt Calc: " + str(cell_max_diff_volt) + " mV")
 
             temps = int(inc_data[byte_index:byte_index + 2],16)
-            telemetry_module.set_telemetry("total_temps", temps) # telemetry
-
+            #telemetry_module.set_telemetry("total_temps", temps) # telemetry
+            #MQTT senden
+            daten_hinzufuegen(temps)
+            
             if debug_output > 0:
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", Total temperature sensors: " + str(temps))
             byte_index += 2
@@ -569,8 +612,10 @@ def bms_getAnalogData(bms,batNumber):
             for i in range(0,temps): 
                 t_cell[(p-1,i)] = (int(inc_data[byte_index:byte_index + 4],16)-2730)/10
                 if i >= 4:
-                    telemetry_module.set_telemetry(temp_key[i], t_cell[(p-1,i)]) # telemetry of temp_5 and temp_6 
-                
+                    #telemetry_module.set_telemetry(temp_key[i], t_cell[(p-1,i)]) # telemetry of temp_5 and temp_6 
+                    #MQTT
+                    daten_hinzufuegen(t_cell[(p-1,i))
+                    
                 byte_index += 4
                 if debug_output > 0:
                     print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", Temp" + str(i+1) + ": " + str(round(t_cell[(p-1,i)],1)) + " °C")
@@ -585,8 +630,12 @@ def bms_getAnalogData(bms,batNumber):
                         cell_min_temp = t_cell[(p-1,i)]
                     if t_cell[(p-1,i)] > cell_max_temp:
                         cell_max_temp = t_cell[(p-1,i)]
-            telemetry_module.set_telemetry("cell_max_temp", cell_max_temp) # telemetry
-            telemetry_module.set_telemetry("cell_min_temp", cell_min_temp) # telemetry
+            #telemetry_module.set_telemetry("cell_max_temp", cell_max_temp) # telemetry
+            #telemetry_module.set_telemetry("cell_min_temp", cell_min_temp) # telemetry
+            #MQTT
+            daten_hinzufuegen(cell_max_temp)
+            daten_hinzufuegen(cell_min_temp)
+            
             inter_process_comm_module.set_bms_gui_data("cell_max_temp", cell_max_temp) # instrumentation gui
             inter_process_comm_module.set_bms_gui_data("cell_min_temp", cell_min_temp) # instrumentation gui
  
@@ -1017,6 +1066,17 @@ def bms_getWarnInfo(bms):
         return False, "Error parsing BMS warning data: " + str(e)
 
     return True,True
+
+#MQTT run
+def run():
+    client = connect_mqtt()
+    client.loop_start()
+    publish(client)
+    client.loop_stop()
+
+#MQTT
+if __name__ == '__main__':
+    run()
 
 # message to console
 # print BMS software version and serial number only once
