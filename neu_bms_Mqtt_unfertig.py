@@ -13,8 +13,8 @@ import serial
 import io
 import sys
 import constants
-import telemetry_module
-import server_module
+#import telemetry_module
+#import server_module
 import inter_process_comm_module
 import datetime
 
@@ -655,13 +655,18 @@ def bms_getAnalogData(bms,batNumber):
             if i_pack[p-1] >= 32768:
                 i_pack[p-1] = -1*(65535 - i_pack[p-1])
             i_pack[p-1] = i_pack[p-1]/100
-            telemetry_module.set_telemetry("i_pack", i_pack[p-1]) # telemetry
-
+            #telemetry_module.set_telemetry("i_pack", i_pack[p-1]) # telemetry
+            #MQTT
+            daten_hinzufuegen(i_pack[p-1])
+            
+            
             if debug_output > 0:
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", I Pack: " + str(i_pack[p-1]) + " A")
 
             v_pack.append(int(inc_data[byte_index:byte_index+4],16)/1000)
-            telemetry_module.set_telemetry("v_pack", v_pack[p-1]) # telemetry
+            #telemetry_module.set_telemetry("v_pack", v_pack[p-1]) # telemetry
+            #MQTT
+            daten_hinzufuegen(v_pack[p-1])
             byte_index += 4
 
             if debug_output > 0:
@@ -669,13 +674,17 @@ def bms_getAnalogData(bms,batNumber):
 
             # calculate "p_pack"
             p_pack = v_pack[p-1] * i_pack[p-1]
-            telemetry_module.set_telemetry("p_pack", p_pack) # telemetry
+            #telemetry_module.set_telemetry("p_pack", p_pack) # telemetry
+            #MQTT
+            daten_hinzufuegen(p_pack)
             inter_process_comm_module.set_bms_gui_data("p_pack", p_pack) # instrumentation gui
             if debug_output > 0:
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", P Pack: " + str(p_pack) + " W")
             
             i_remain_cap.append(int(inc_data[byte_index:byte_index+4],16)*10)
-            telemetry_module.set_telemetry("i_remaining_capacity", i_remain_cap[p-1]) # telemetry
+            #telemetry_module.set_telemetry("i_remaining_capacity", i_remain_cap[p-1]) # telemetry
+            #MQTT
+            daten_hinzufuegen(i_remain_cap[p-1])
             byte_index += 4
 
             if debug_output > 0:
@@ -691,7 +700,9 @@ def bms_getAnalogData(bms,batNumber):
 
             try:
                 soc.append(round(i_remain_cap[p-1]/i_full_cap[p-1]*100,2))
-                telemetry_module.set_telemetry("soc", soc[p-1]) # telemetry
+                #telemetry_module.set_telemetry("soc", soc[p-1]) # telemetry
+                #MQTT
+                daten_hinzufuegen(soc[p-1])
                 inter_process_comm_module.set_bms_gui_data("soc", soc[p-1]) # instrumentation gui
                 if debug_output > 0:
                     print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", SOC: " + str(soc[p-1]) + " %")
@@ -699,7 +710,9 @@ def bms_getAnalogData(bms,batNumber):
                 print("Error parsing BMS analog data, missing pack"  + str(p).zfill(config['zero_pad_number_packs']) + " full capacity: ", str(e))
 
             cycles.append(int(inc_data[byte_index:byte_index+4],16))
-            telemetry_module.set_telemetry("cycles", cycles[p-1]) # telemetry
+            #telemetry_module.set_telemetry("cycles", cycles[p-1]) # telemetry
+            #MQTT
+            daten_hinzufuegen(cycles[p-1])
             byte_index += 4
 
             if debug_output > 0:
@@ -900,7 +913,9 @@ def bms_getWarnInfo(bms):
     try:
 
         packsW = int(inc_data[byte_index:byte_index+2],16)
-        telemetry_module.set_telemetry("warning_info_packs", packsW) # telemetry
+        #telemetry_module.set_telemetry("warning_info_packs", packsW) # telemetry
+        #MQTT
+        daten_hinzufuegen(packsW)
         if debug_output > 0:
             print("Packs for warnings: " + str(packsW))
         byte_index += 2
@@ -977,13 +992,18 @@ def bms_getWarnInfo(bms):
             # "instruction state" shall be printed separately
             # added in fork https://github.com/jpgnz/bmspace
             instructionState = ord(bytes.fromhex(inc_data[byte_index:byte_index+2].decode('ascii')))
-            telemetry_module.set_telemetry("current_limit", instructionState>>0 & 1) # telemetry
-            telemetry_module.set_telemetry("charge_fet", instructionState>>1 & 1) # telemetry
-            telemetry_module.set_telemetry("discharge_fet", instructionState>>2 & 1) # telemetry
-            telemetry_module.set_telemetry("pack_indicate", instructionState>>3 & 1) # telemetry
-            telemetry_module.set_telemetry("reverse", instructionState>>4 & 1) # telemetry
-            telemetry_module.set_telemetry("ac_in", instructionState>>5 & 1) # telemetry
-            telemetry_module.set_telemetry("heart", instructionState>>7 & 1) # telemetry
+            #telemetry_module.set_telemetry("current_limit", instructionState>>0 & 1) # telemetry
+            #telemetry_module.set_telemetry("charge_fet", instructionState>>1 & 1) # telemetry
+            #telemetry_module.set_telemetry("discharge_fet", instructionState>>2 & 1) # telemetry
+            #telemetry_module.set_telemetry("pack_indicate", instructionState>>3 & 1) # telemetry
+            #telemetry_module.set_telemetry("reverse", instructionState>>4 & 1) # telemetry
+            #telemetry_module.set_telemetry("ac_in", instructionState>>5 & 1) # telemetry
+            #telemetry_module.set_telemetry("heart", instructionState>>7 & 1) # telemetry
+            #MQTT
+            daten_hinzufuegen(instructionState>>1 & 1) #charge_fet
+            daten_hinzufuegen(instructionState>>2 & 1) #discharge_fet
+            daten_hinzufuegen(instructionState>>4 & 1) #reverse
+            
             if debug_output > 0:
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", current_limit: " + str(instructionState>>0 & 1))
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", charge_fet: " + str(instructionState>>1 & 1))
@@ -1043,13 +1063,15 @@ def bms_getWarnInfo(bms):
 
             warnings = warnings.rstrip(", ")
 
-            telemetry_module.set_telemetry("warning_string", warnings) # telemetry
+            #telemetry_module.set_telemetry("warning_string", warnings) # telemetry
+            #MQTT
+            daten_hinzufuegen(warnings)
             if warnings == "":
                 inter_process_comm_module.set_bms_gui_data("warning_string", "       ") # instrumentation gui
             else:
                 inter_process_comm_module.set_bms_gui_data("warning_string", "Warning") # instrumentation gui
-            telemetry_module.set_telemetry("balancing_1", balanceState1) # telemetry
-            telemetry_module.set_telemetry("balancing_2", balanceState1) # telemetry
+            #telemetry_module.set_telemetry("balancing_1", balanceState1) # telemetry
+            #telemetry_module.set_telemetry("balancing_2", balanceState1) # telemetry
             if debug_output > 0:
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", warnings: " + warnings)
                 print("Pack " + str(p).zfill(config['zero_pad_number_packs']) + ", balancing1: " + balanceState1)
@@ -1067,16 +1089,7 @@ def bms_getWarnInfo(bms):
 
     return True,True
 
-#MQTT run
-def run():
-    client = connect_mqtt()
-    client.loop_start()
-    publish(client)
-    client.loop_stop()
 
-#MQTT
-if __name__ == '__main__':
-    run()
 
 # message to console
 # print BMS software version and serial number only once
@@ -1096,15 +1109,20 @@ if success != True:
 
 # message to console
 # print network attributes
-attributes = server_module.get_network_attributes()
+#attributes = server_module.get_network_attributes()
 
 # connect to TB Server
-server_module.TB_server_connect()
+#server_module.TB_server_connect()
+
+#connect to MQTT Server 
+client = connect_mqtt() #neu
+client.loop_start() #neu
 
 # Loop
 try:
     while True:
         if bms_connected == True:
+
             ###############
             # data from BMS 
             success, data = bms_getAnalogData(bms,batNumber=255)
@@ -1121,14 +1139,26 @@ try:
             ######################
             # speed and alive data
             speed_km_h = inter_process_comm_module.read_speed_km_h() # read speed_km_h
-            telemetry_module.set_telemetry("speed_km_h", speed_km_h)
+            #telemetry_module.set_telemetry("speed_km_h", speed_km_h)
+            #MQTT
+            daten_hinzufuegen(speed_km_h)
+            
             alive = not alive # toggle alive variable
-            telemetry_module.set_telemetry("alive", alive)
+            #telemetry_module.set_telemetry("alive", alive)
+            #MQTT
+            daten_hinzufuegen(alive)
+            
             ############################
             # send telemetry to TB Server
-            server_module.client.send_telemetry(telemetry_module.telemetry)
-            if debug_output2 > 1:
-                print(telemetry_module.telemetry)
+            #server_module.client.send_telemetry(telemetry_module.telemetry)
+            #if debug_output2 > 1:
+            #    print(telemetry_module.telemetry)
+            
+            daten_mqtt = f"{gesammelte_daten}" #neu
+            result = client.publish(topic, daten_mqtt) #neu
+            gesammelte_daten.clear() #neu
+
+            
             time.sleep(scan_interval/3)
             ###########################
             # BMS GUI data
@@ -1141,7 +1171,10 @@ try:
             time.sleep(5)
 except KeyboardInterrupt:
     print("\nProgram terminated by user.")
-    server_module.client.disconnect()
- 
+    #server_module.client.disconnect()
+
+finally:
+    client.loop_stop() #neu
+    
 # end of program
 print("END: " + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
