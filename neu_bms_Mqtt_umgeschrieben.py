@@ -614,7 +614,7 @@ def bms_getAnalogData(bms,batNumber):
                 if i >= 4:
                     #telemetry_module.set_telemetry(temp_key[i], t_cell[(p-1,i)]) # telemetry of temp_5 and temp_6 
                     #MQTT
-                    daten_hinzufuegen(t_cell[(p-1,i))
+                    daten_hinzufuegen(t_cell[(p-1,i)])
                     
                 byte_index += 4
                 if debug_output > 0:
