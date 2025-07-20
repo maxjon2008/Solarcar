@@ -1,3 +1,5 @@
+#Auslesen eines Reed-Schalters mit gpiozero um die Radgeschwindigkeit auszulesen. Diese wird dann in eine Datei geschrieben
+
 from gpiozero import Button
 from time import time, sleep
 import logging
