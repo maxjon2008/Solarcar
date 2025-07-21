@@ -2,25 +2,25 @@
 
 from gpiozero import Button
 from time import time, sleep
+import sys
 import logging
 import filelock
-import sys
 
 # GPIO-Pin, an dem der Reed-Kontakt angeschlossen ist
 reed_pin = 4
 
 # Umfang des Rades in Metern (z.B. 2 Meter) ; /5, da 5 Impulse pro umdrehung
-wheel_circumference_m = 20.0/5
+wheel_circumference_m = 2.2/5
 
-# Button-Objekt furr den Reed-Kontakt (nimmt an, dass der Reed Kontakt den Pin auf LOW zieht)
-reed_switch = Button(reed_pin, pull_up=True)
+# Button-Objekt fuer den Reed-Kontakt (nimmt an, dass der Reed Kontakt den Pin auf LOW zieht)
+reed_switch = Button(reed_pin, pull_up=False, bounce_time=0.1)
 
 # Zeit des letzten Impulses
 last_time = None
 # gemessene Geschwindigkeit (km/h)
 speed_kmh = 0
 
-# Logger fÃ¼r die serielle Schnittstelle initialisieren 
+# Logger für die serielle Schnittstelle initialisieren 
 logger = logging.getLogger()
 logger.addHandler(logging.StreamHandler(sys.stdout))
 logger.setLevel(logging.INFO)
@@ -28,7 +28,7 @@ logger.setLevel(logging.INFO)
 # filelock logging level setzen
 logging.getLogger("filelock").setLevel(logging.INFO)
 
-# Dateien fÃ¼r Inter-Prozess-Kommunikation definieren
+# Dateien für Inter-Prozess-Kommunikation definieren
 file_path = "SolarCar_speed.txt"
 lock_path = "SolarCar_speed.txt.lock" 
 
@@ -64,5 +64,4 @@ try:
 
 except KeyboardInterrupt:
     print("\nProgramm beendet.")
-
 
